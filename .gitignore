@@ -1,0 +1,9 @@
+##objects files
+*.o
+*.root
+*.C~
+*.cc~
+*.hh~
+*.h~
+*Dictionary*
+*~

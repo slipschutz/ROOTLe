@@ -1,0 +1,79 @@
+#!/bin/bash
+
+
+if [ $# -ne 1 ]; then
+echo "Parse called with no file.  FATAL ERROR"
+exit -9;
+fi
+echo;
+echo;
+echo "Parsing file "$1;
+
+
+tempFile=$1"___124";
+f=$(echo $1 | awk 'BEGIN{FS="."}{print $1}')
+s=$(echo $1 | awk 'BEGIN{FS="."}{print $2}')
+
+theCCfile=$f".cc";
+Dictionary=$f"Parsed.cc";
+
+
+if [ ! -f $theCCfile ]; then
+echo "No .cc file found for "$1 "FATAL error"
+exit
+fi
+
+echo "Making file "$Dictionary
+
+
+
+##check for dictionary present
+if [ -f $Dictionary ] || [ -f $DictionaryHeader ]; then
+# delete dictionary
+    rm -f $Dictionary
+    rm -f $DictionaryHeader
+fi
+
+
+
+$(cat $1 | awk '{if ($0 ~/__var/){print}}' >$tempFile )
+numOfLines=$(cat $tempFile | wc -l);
+
+if [ $numOfLines -eq -99 ]; then
+#echo "No variables to make Parsed file"
+#if no variables to dictionarize just copy file to dictionary
+#$(cp $1 $DictionaryHeader);
+$(cp $theCCfile $Dictionary);
+rm -f $tempFile
+exit; ## now exit 
+fi
+
+
+cat $theCCfile > $Dictionary;
+##find name of class
+className=$(cat $1 | awk '{if ($0~/public Correctable/){print $2}}')
+
+
+echo "///////BEGIN __AUTO__ GENERATED///////">>$Dictionary
+echo "void $className::DefineMap(){">>$Dictionary
+
+
+## begin loop over variables 
+
+for ((i=0;i<$numOfLines;i++)); do
+    line=$(head -$((i+1)) $tempFile | tail -1)
+    
+    bit=$(echo $line | awk ' { if($0 ~/\[/ ){print "1"} else {print "0"} } ')
+    echo $bit
+    temp=$(echo $line| awk ' BEGIN{FS=";"}{print $1}')
+    type=$(echo $temp| awk '{print $1}')
+    var=$(echo $temp| awk '{print $2}')
+    
+echo "theVariableMap[\"$var\"]=&$var;">>$Dictionary
+
+done
+echo "}">>$Dictionary
+
+rm -f $tempFile
+
+
