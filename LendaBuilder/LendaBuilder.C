@@ -316,7 +316,7 @@ int main(int argc, char **argv){
   
   Event->WriteSettings(theSettings);
   //Write the tree to file 
-  outT->Write();
+  outT->Write("",TObject::kOverwrite);
   theSettings->Write();
   //Close the file
   outFile->Close();

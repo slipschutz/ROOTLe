@@ -1,5 +1,5 @@
 CXX=$(shell root-config --cxx)
-CFLAGS=-c -g -Wall $(shell root-config --cflags) -I./src -I ./include -O3
+CFLAGS=-c -g -Wall $(shell root-config --cflags) -I./src -I./include -I../Headers -O3
 LDLIBS=$(shell root-config --glibs)
 LDFLAGS=$(shell root-config --ldflags)
 #SOURCES=./src/SL_Event.cc ./src/FileManager.cc ./src/Filter.cc
@@ -15,18 +15,11 @@ MAIN=$(addsuffix .C,$(EXE))
 MAINO=./src/$(addsuffix .o,$(EXE))
 
 
-INCLUDEPATH=include
-SRCPATH=src
 ROOTCINT=rootcint
 
-## .so libraries
-#EVENTLIBPATH=/mnt/daqtesting/lenda/sam_analysis/LendaEvent/
-EVENTLIBPATH=/user/lipschut/Introspective
-LIB=LendaEvent
-EVENTLIB=$(LIB)
-DDASCHANNELPATH=/user/lipschut/DDASEvent/
-CHLIB=DDASEvent
-CHEVENTLIB=$(CHLIB)
+######### .so libraries
+LENDALIBS=-lLendaEvent -lDDASEvent -lSettings -lFilter -lLendaPacker
+
 
 .PHONY: clean get put all test sclean
 
@@ -34,7 +27,7 @@ all: $(EXECUTABLE)
 
 $(EXECUTABLE) : $(OBJECTS) $(MAINO)
 	@echo "Building target" $@ "..." 
-	$(CXX) $(LDFLAGS) -o $@ $(OBJECTS) $(MAINO) $(LDLIBS) -L$(EVENTLIBPATH) -l$(EVENTLIB) -L$(DDASCHANNELPATH) -l$(CHEVENTLIB) -L/user/lipschut/Settings -lSettings -L/user/lipschut/Filter -lFilter -L/user/lipschut/LendaPacker/ -lLendaPacker -Wl,-rpath,$(LENDAHEAD)/LendaCommonLib 
+	$(CXX) $(LDFLAGS) -o $@ $(OBJECTS) $(MAINO) $(LDLIBS) $(LENDALIBS) -Wl,-rpath,../Libs -L../Libs
 	@echo
 	@echo "Build succeed"
 

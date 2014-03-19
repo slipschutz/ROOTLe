@@ -1,1 +1,0 @@
-/user/lipschut/Introspective/LendaEvent.hh

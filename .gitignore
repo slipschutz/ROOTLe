@@ -8,3 +8,5 @@
 *Dictionary*
 *~
 *.gitignore
+*.so
+*LendaBuilder
