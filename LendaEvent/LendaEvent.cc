@@ -1,5 +1,3 @@
- 
-
 #include "LendaEvent.hh"
 #include <iostream>
 #include "TMath.h"
@@ -31,8 +29,6 @@ LendaEvent::LendaEvent()
 }
 LendaEvent::LendaEvent(bool BuildMap){
   LendaEvent();
-  if (BuildMap)
-    DefineMap();
   
 }
 
@@ -68,7 +64,7 @@ void LendaEvent::PrintList(){
   for (map<string,int>::iterator ii =CorMap.begin();ii!=CorMap.end();ii++)
     cout<<ii->first<<"  "<<ii->second<<endl;
   */
-  AddMapEntry("energies",&energies);
+
 }
 
 void LendaEvent::Clear(){
@@ -177,6 +173,23 @@ void LendaEvent::pushInternEnergy(Double_t t){
 
 void LendaEvent::pushPulseHeight(Double_t t){
   pulseHeights.push_back(t);
+}
+
+void LendaEvent::pushSoftwareTime(int FL,int FG,int d,int w,Double_t time){
+  vector <int> temp{FL,FG,d,w};
+  if (SoftwareTimes.count(temp) ==0 ){ //If there isn't a time there already
+    SoftwareTimes[temp]=time;
+  }else{///
+    cout<<"***Warning SoftwareTime for Filter set already present in Event"<<endl;
+  }
+}
+
+void LendaEvent::PrintSoftwareTimes(){
+
+  for (map<vector<int>,Double_t>::iterator ii =SoftwareTimes.begin();ii!=SoftwareTimes.end();ii++){
+    //    cout<<"Rise "<<ii->first[0]<<" Gap "<<ii->first[1]<<" Delay "<<ii->first[2]<<" Scale Factor "<<ii->first[3]<<" Time "<<ii->second<<endl;
+    printf("Rise %4d Gap %4d Dealy %4d Scale Factor %4d Time %8.4lf\n",ii->first[0],ii->first[1],ii->first[2],ii->first[3],ii->second);
+  }
 }
 
 void LendaEvent::gainCor(){
@@ -325,55 +338,6 @@ void LendaEvent::Fatal(){
 }
 
 
-void LendaEvent::MakeC(int spot){
-  /*  
-  cout<<"this is CTrace "<<CTrace<<endl;
-  
-  if (CTrace != 0){
-    cout<<"Free CTrace"<<endl;
-    free(CTrace);
-    CTrace=0;
-    
-  }
-  if (CFilter !=0){
-    cout<<"Free CFilter"<<endl;
-    free(CFilter);
-    CFilter=0;
-  }
-
-  if (CCFD !=0 ){
-    cout<<"Free CCFD"<<endl;
-    free(CCFD);
-    CCFD=0;
-  }
-
-  if (Traces.size()!=0 &&Traces[spot].size() != 0 ){
-    cout<<"Allocate CTrace"<<endl;
-    CTrace = (UShort_t*)calloc(sizeof(UShort_t),Traces[spot].size());
-  }
-  
-  if (Filters.size() !=0 && Filters[spot].size() != 0){
-    cout<<"Allocate CFilter"<<endl;
-    CFilter = (Double_t*)calloc(sizeof(Double_t),Traces[spot].size());
-  }
-  
-  if (CFDs.size() !=0 && CFDs[spot].size() != 0 ){
-    cout<<"Allocate CCFD"<<endl;
-    CCFD = (Double_t*)calloc(sizeof(Double_t),Traces[spot].size());
-  }
-  
-  for (int i=0;i<Traces[spot].size();i++){
-    if (CTrace != 0)
-      CTrace[i]=Traces[spot][i];
-    if (CFilter !=0 )
-      CFilter[i]=Filters[spot][i];
-    if ( CCFD !=0 )
-      CCFD[i]=CFDs[spot][i];
-  }
-  */
-}
-
-
 
 LendaEvent & LendaEvent::operator = (const LendaEvent&  right){
 
@@ -409,18 +373,4 @@ LendaEvent & LendaEvent::operator = (const LendaEvent&  right){
 }
 
 
-///////BEGIN __AUTO__ GENERATED///////
-void LendaEvent::DefineMap(){
-theVariableMap["TOF"]=&TOF;
-theVariableMap["Dt"]=&Dt;
-theVariableMap["CDt"]=&CDt;
-theVariableMap["NumBadPoints"]=&NumBadPoints;
-theVariableMap["PulseShape"]=&PulseShape;
-theVariableMap["GOE"]=&GOE;
-theVariableMap["CorGOE"]=&CorGOE;
-theVariableMap["energies"]=&energies;
-theVectorVariableMap["energies"]=&energies;
-theVariableMap["energiesCor"]=&energiesCor;
-theVectorVariableMap["energiesCor"]=&energiesCor;
-}
- 
+

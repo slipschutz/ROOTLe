@@ -3,13 +3,12 @@
 
 #include "TObject.h"
 #include "TFile.h"
-#include "Correctable.hh"
 #include <vector>
 #include <map>
 #include "Settings.hh"
 using namespace std;
 
-class LendaEvent :  public Correctable  {
+class LendaEvent :  public TObject  {
 public:
 
   LendaEvent(); //Constructor 
@@ -18,7 +17,7 @@ public:
 
   void Finalize(); //Applies internal corrections and calculates convient Branches/leaves
 
-  virtual void DefineMap(); //Inherited from Correctable defines var look up
+  //  virtual void DefineMap(); //Inherited from Correctable defines var look up
   void PrintList();
  
   //Convenient quantities calculated in Finalize
@@ -55,7 +54,7 @@ public:
   vector <Int_t > ZeroCrossings;
   //  vector<Double_t> Corrections;
   #ifndef __CINT__
-  map <string,int> CorMap;
+  map <vector<int>,double> SoftwareTimes;
   #endif
   //Main information holders
   vector <Double_t> energiesCor; //the corrected energies 
@@ -82,13 +81,6 @@ public:
   
 
 
-  //C Trace thing
-  //root like c arrays more then vectors of vectors
-  void MakeC(int spot=0);  //copy trace,FF,CFD data for the spot-th trace into C-arrays
-  //the c-array to store the trace in
-
-
-
   //pushing methods expects the series of times and energies and everything else to be ordered by channel
   void pushLongGate(Double_t);
   void pushShortGate(Double_t);
@@ -108,6 +100,7 @@ public:
 
   void pushPulseHeight(Double_t);
   void pushNumZeroCrossings(Int_t);
+  void pushSoftwareTime(int FL,int FG,int d,int w,Double_t time);
   Int_t NumOfChannelsInEvent; //The Number of channels associated with this event
 
 
@@ -124,7 +117,8 @@ public:
 
   void DumpGainCorrections();
   void DumpAllCorrections();
-
+  
+  void PrintSoftwareTimes();
 
 
   
@@ -137,11 +131,10 @@ public:
 
   void WriteSettings(Settings * theSettings);
 
+
 private:
 
   void gainCor(); //method to apply the walk corrections
-
-
 
   vector < pair<Double_t,Double_t> > fgainCorrections; //the gain corrections 
 
@@ -150,7 +143,7 @@ private:
 
   
 public:
-  ClassDef(LendaEvent, 19);
+  ClassDef(LendaEvent, 20);
 };
 
 #endif

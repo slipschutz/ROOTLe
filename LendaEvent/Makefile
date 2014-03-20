@@ -1,14 +1,10 @@
 LENDAHEAD=$(shell echo $$LENDAHEAD)
 CXX=$(shell root-config --cxx)
-CFLAGS=-c -g -Wall $(shell root-config --cflags)
+CFLAGS=-c -g -Wall $(shell root-config --cflags) -std=c++0x
 INCLUDES= -I./include -I$(LENDAHEAD)/LendaCommonInclude
 LDLIBS=$(shell root-config --glibs)
 LDFLAGS=$(shell root-config --ldflags)
 #SOURCES=./src/SL_Event.cc ./src/FileManager.cc ./src/Filter.cc
-
-EXTRASOURCE=Correctable.cc CorrectionInfo.cc
-EXTRAOBJS=$(patsubst %.cc,%.o,$(EXTRASOURCE))
-EXTRAHEADS=$(patsubst %.cc,%.hh,$(EXTRASOURCE))
 
 ROOTCINT=rootcint
 
