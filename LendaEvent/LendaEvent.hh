@@ -53,12 +53,17 @@ public:
   vector <Bool_t> OverFlows;
   vector <Int_t > ZeroCrossings;
   //  vector<Double_t> Corrections;
-  #ifndef __CINT__
-  map <vector<int>,double> SoftwareTimes;
-  #endif
+  //  #ifndef __CINT__
+  map <vector<Int_t>,Double_t> SoftwareTimes;
+  //  #endif
+  Double_t GetSoftwareTime(int channel,int FL,int FG,int d, int w);
+  Double_t GetTimeRes(int FL,int FG,int d,int w);
+
   //Main information holders
   vector <Double_t> energiesCor; //the corrected energies 
   vector <Double_t> times; //the times
+  vector <UInt_t> timeLows; //the timelows
+  vector <UInt_t> timeHighs; //the timeHighs
   vector <Double_t> softTimes;
   vector <Double_t> cubicTimes;
   vector <Double_t> energies; // the raw energies
@@ -97,10 +102,12 @@ public:
   void pushEntryNum(Long64_t);
   void pushCubicTime(Double_t);
   void pushCubicCFD(Double_t);
-
+  void pushTimeLow(UInt_t);
+  void pushTimeHigh(UInt_t);
   void pushPulseHeight(Double_t);
   void pushNumZeroCrossings(Int_t);
-  void pushSoftwareTime(int FL,int FG,int d,int w,Double_t time);
+       
+  void pushSoftwareTime(int channel,int FL,int FG,int d,int w,Double_t time);
   Int_t NumOfChannelsInEvent; //The Number of channels associated with this event
 
 

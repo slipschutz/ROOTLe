@@ -5,7 +5,7 @@
 #ifndef __LENDAPACKER_HH
 #define __LENDAPACKER_HH
 
-#include "TTree.h"
+
 #include "Filter.hh"
 #include <vector>
 #include "LendaEvent.hh"
@@ -25,7 +25,7 @@ public:
   void CalcTimeFilters();
   void CalcEnergyGates();
   void CalcAll();
-  void SetFilter(Double_t,Double_t,Double_t,Double_t);
+  void SetFilter(Int_t,Int_t,Int_t,Int_t);
   void SetGates(Double_t,Double_t,Double_t,Double_t);
   inline void SetTraceDelay(Int_t x){traceDelay=x;}
 
@@ -45,20 +45,22 @@ public:
   Double_t softwareCFD;
   Double_t start;
   
-
-
+  void PackManySoftwareTimes(LendaEvent *Event);
+  
 
   void PackEvent(LendaEvent* Event);
   void RePackEvent(LendaEvent* Event);
 
 private:
   ddaschannel * theChannel;
-  Double_t FL,FG,d,w;
+  Int_t fFL,fFG,fd,fw;
   Double_t lg,sg,lg2,sg2;
   Int_t traceDelay;
   Long64_t jentry;
 
   Int_t numZeroCrossings;
+  
+
 };
 
 #endif

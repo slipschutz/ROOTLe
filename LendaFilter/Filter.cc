@@ -56,6 +56,43 @@ void Filter::FastFilter(std::vector <UShort_t> &trace,std::vector <Double_t> &th
     }//End for    
 }
 
+void Filter::FastFilterOp(std::vector <UShort_t> &trace,std::vector <Double_t> &thisEventsFF,Double_t FL,Double_t FG){
+  Double_t sumNum1=0;
+  Double_t sumNum2=0;
+  
+  int size = trace.size();
+  int half = size/2;
+  thisEventsFF.resize(size,0);
+
+  
+  int start =half -0.15*size;
+  int end = half + 0.15*size;
+
+  for (int i=start;i<end;i++){
+    
+    for (int j= i-(FL-1) ;j<=i;j++)
+      {
+	if (j>=0)
+	  sumNum1 = sumNum1+ trace[j];
+	else 
+	  cout<<"Oh NO"<<endl;
+      }
+    
+    for (int j=i-(2*FL+FG-1);j<=i-(FL+FG);j++)
+      {
+	if (j>=0)
+	  sumNum2 = sumNum2+ trace[j];
+	else
+	  cout<<"oh no"<<endl;
+      }
+    thisEventsFF[i]=sumNum1-sumNum2;
+    sumNum1=0;
+    sumNum2=0;
+  }
+}
+
+
+
 
 void Filter:: FastFilterFull(std::vector <UShort_t> &trace,
 			     std::vector <Double_t> &thisEventsFF,
@@ -155,17 +192,36 @@ std::vector <Double_t> Filter::CFD(std::vector <Double_t> &thisEventsFF,
 
 }
 
+std::vector <Double_t> Filter::CFDOp(std::vector <Double_t> &thisEventsFF,
+				   Double_t CFD_delay,
+				   Double_t CFD_scale_factor){
+
+  std::vector <Double_t> thisEventsCFD;
+  int size = thisEventsFF.size();
+  thisEventsCFD.resize(thisEventsFF.size(),0);
+  
+  int start = size/2 -0.15*size;
+  int end = size/2 + 0.15*size;
+
+  for (int j=start;j<end;j++) {
+    thisEventsCFD[j+CFD_delay] = thisEventsFF[j+CFD_delay] - 
+      thisEventsFF[j]/ ( TMath::Power(2,CFD_scale_factor+1) );
+  }
+  
+  return thisEventsCFD;
+}
+
+
 #define BAD_NUM -10008
 
 Double_t Filter::GetZeroCrossing(std::vector <Double_t> & CFD,Int_t & NumZeroCrossings){
-
 
   Double_t softwareCFD;
   std::vector <Double_t> thisEventsZeroCrossings(0);
   Double_t MaxValue=0;
   Int_t MaxIndex=-1;
 
-  for (int j=(CFD.size()/2.0)-10;j< (int) (CFD.size()/2.0)+10;j++) { 
+  for (int j=(CFD.size()/2.0)-20;j< (int) (CFD.size()/2.0)+20;j++) { 
     if (CFD[j] >= 0 && CFD[j+1] < 0 && 
 	TMath::Abs(CFD[j] - CFD[j+1]) > 5)
       {//zero crossing point
@@ -187,6 +243,38 @@ Double_t Filter::GetZeroCrossing(std::vector <Double_t> & CFD,Int_t & NumZeroCro
   */
 
 }
+
+
+
+Double_t Filter::GetZeroCrossingOp(std::vector <Double_t> & CFD,Int_t & NumZeroCrossings){
+
+  Double_t softwareCFD=-10;
+  std::vector <Double_t> thisEventsZeroCrossings(10,0);
+  Double_t MaxValue=0;
+  Int_t MaxIndex=-1;
+
+  for (int j=(CFD.size()/2.0)-20;j< (int) (CFD.size()/2.0)+20;j++) { 
+    if (CFD[j] >= 0 && CFD[j+1] < 0 && 
+	TMath::Abs(CFD[j] - CFD[j+1]) > 5)
+      {//zero crossing point
+	softwareCFD =j + CFD[j] / ( CFD[j] + TMath::Abs(CFD[j+1]) );
+	break;
+      }
+  }
+  NumZeroCrossings=-1;
+  if (softwareCFD==-10) // no Zero Crossing found
+    return BAD_NUM;
+  else
+    return softwareCFD;
+  /*  if (thisEventsZeroCrossings.size() != 1 )
+    return 2*BAD_NUM;
+  */
+
+}
+
+
+
+
 
 
 #include <map>

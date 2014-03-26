@@ -87,6 +87,8 @@ void LendaEvent::Clear(){
   PulseShape=BAD_NUM;
   
   times.clear();
+  timeLows.clear();
+  timeHighs.clear();
   energies.clear();
   energiesCor.clear();
   internEnergies.clear();
@@ -110,7 +112,7 @@ void LendaEvent::Clear(){
   ZeroCrossings.clear();
   
   // heDynamicCorrectionResults.clear();
-
+  SoftwareTimes.clear();
 
   NumOfChannelsInEvent=0;
   N=0;
@@ -174,21 +176,43 @@ void LendaEvent::pushInternEnergy(Double_t t){
 void LendaEvent::pushPulseHeight(Double_t t){
   pulseHeights.push_back(t);
 }
+void LendaEvent::pushTimeLow(UInt_t t){
+  timeLows.push_back(t);
+}
+void LendaEvent::pushTimeHigh(UInt_t t){
+  timeHighs.push_back(t);
+}
 
-void LendaEvent::pushSoftwareTime(int FL,int FG,int d,int w,Double_t time){
-  vector <int> temp{FL,FG,d,w};
+
+void LendaEvent::pushSoftwareTime(int channel,int FL,int FG,int d,int w,Double_t time){
+  vector <int> temp{channel,FL,FG,d,w};
   if (SoftwareTimes.count(temp) ==0 ){ //If there isn't a time there already
     SoftwareTimes[temp]=time;
   }else{///
     cout<<"***Warning SoftwareTime for Filter set already present in Event"<<endl;
   }
 }
+Double_t LendaEvent::GetSoftwareTime(int channel,int FL,int FG,int d, int w){
+  vector <int> temp{channel,FL,FG,d,w};
+  if (SoftwareTimes.count(temp) ==0){
+    return -1;
+  }
+  return SoftwareTimes[temp];
+}
+
+Double_t LendaEvent::GetTimeRes(int FL,int FG,int d,int w){
+  if (N != 4){
+    cout<<"***Not an N=4 event"<<endl;
+    return -1;
+  } else {
+    return 0.5*(GetSoftwareTime(0,FL,FG,d,w)+GetSoftwareTime(1,FL,FG,d,w)-GetSoftwareTime(2,FL,FG,d,w)-GetSoftwareTime(3,FL,FG,d,w));
+  }
+}
 
 void LendaEvent::PrintSoftwareTimes(){
-
+  //Method to print the SoftwareTimes that have been pushed
   for (map<vector<int>,Double_t>::iterator ii =SoftwareTimes.begin();ii!=SoftwareTimes.end();ii++){
-    //    cout<<"Rise "<<ii->first[0]<<" Gap "<<ii->first[1]<<" Delay "<<ii->first[2]<<" Scale Factor "<<ii->first[3]<<" Time "<<ii->second<<endl;
-    printf("Rise %4d Gap %4d Dealy %4d Scale Factor %4d Time %8.4lf\n",ii->first[0],ii->first[1],ii->first[2],ii->first[3],ii->second);
+    printf("Channel %4d Rise %4d Gap %4d Dealy %4d Scale Factor %4d Time %8.4lf\n",ii->first[0],ii->first[1],ii->first[2],ii->first[3],ii->first[4],ii->second);
   }
 }
 

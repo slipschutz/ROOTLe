@@ -5,10 +5,10 @@
 LendaPacker::LendaPacker(){
   ///Use bad Defaults to ensure that the calling program set 
   //everything
-  FL=-1; 
-  FG=-1;
-  d=-1;
-  w=-1;
+  fFL=-1; 
+  fFG=-1;
+  fd=-1;
+  fw=-1;
   lg=-1;
   sg=-1;
   lg2=-1;
@@ -19,11 +19,11 @@ LendaPacker::LendaPacker(){
   theChannel=NULL;
 }
 
-void LendaPacker::SetFilter(Double_t _FL,Double_t _FG,Double_t _d,Double_t _w){
-  FL=_FL;
-  FG=_FG;
-  d=_d;
-  w=_w;
+void LendaPacker::SetFilter(Int_t _FL,Int_t _FG,Int_t _d,Int_t _w){
+  fFL=_FL;
+  fFG=_FG;
+  fd=_d;
+  fw=_w;
 }
 
 void LendaPacker::SetGates(Double_t _lg,Double_t _sg,Double_t _lg2,Double_t _sg2){
@@ -60,12 +60,12 @@ void LendaPacker::Reset(){
 void LendaPacker::CalcTimeFilters(){
 
 
-  theFilter.FastFilter(theChannel->trace,thisEventsFF,FL,FG); //run FF algorithim
-  thisEventsCFD = theFilter.CFD(thisEventsFF,d,w); //run CFD algorithim
+  theFilter.FastFilter(theChannel->trace,thisEventsFF,fFL,fFG); //run FF algorithim
+  thisEventsCFD = theFilter.CFD(thisEventsFF,fd,fw); //run CFD algorithim
 
   softwareCFD=theFilter.GetZeroCrossing(thisEventsCFD,numZeroCrossings)-traceDelay; //find zeroCrossig of CFD
 
-  cubicCFD = theFilter.GetZeroCubic(thisEventsCFD)-traceDelay;
+  //  cubicCFD = theFilter.GetZeroCubic(thisEventsCFD)-traceDelay;
 
  
 }
@@ -98,6 +98,7 @@ void LendaPacker::CalcEnergyGates(){
 
 void LendaPacker::PackEvent(LendaEvent * Event){
 
+
   Event->pushTrace(theChannel->trace);//save the trace for later 
   
   Event->pushFilter(thisEventsFF); //save filter if it is there
@@ -110,10 +111,13 @@ void LendaPacker::PackEvent(LendaEvent * Event){
   Event->pushEnergy(thisEventsIntegral);;//push trace energy if there
   Event->pushInternEnergy(theChannel->energy);//push internal energy
   Event->pushTime(theChannel->time);
-  Event->pushSoftTime(theChannel->timelow +theChannel->timehigh*4294967296.0+softwareCFD);
+  Event->pushTimeLow(theChannel->timelow);
+  Event->pushTimeHigh(theChannel->timehigh);
+  Event->pushSoftTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0) +softwareCFD);
+    //  Event->pushSoftTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0) - theChannel->GetCFDTriggerSourceBit()+softwareCFD)
   Event->pushSoftwareCFD(softwareCFD);
   Event->pushCubicCFD(cubicCFD);
-  Event->pushCubicTime(theChannel->timelow +theChannel->timehigh*4294967296.0+cubicCFD);
+  Event->pushCubicTime(theChannel->timelow +theChannel->timehigh*4294967296.0+cubicCFD);//WRong
   Event->pushInternalCFD((theChannel->timecfd)/65536.0);
   Event->pushEntryNum(jentry);
   Event->pushNumZeroCrossings(numZeroCrossings);
@@ -131,6 +135,47 @@ void LendaPacker::CalcAll(){
 
 
 void LendaPacker::RePackEvent(LendaEvent * Event){
+
+
+
+}
+
+void LendaPacker::PackManySoftwareTimes(LendaEvent *Event){
+  //Event should already be packed  
+
+  int FL_low=5; 
+  int FL_high=6;
+  
+  int FG_low=0;
+  int FG_high=4;
+  
+  int d_low=2;
+  int d_high=6;
+  
+  int w_low=0;
+  int w_high=4;
+
+
+  int num;
+  for (int i=0;i<(int)Event->times.size();i++){
+    for (int FL=FL_low; FL<FL_high ;FL++){
+      for (int FG=FG_low; FG<FG_high ;FG++){
+	for (int d=d_low; d<d_high ;d++){
+	  for (int w=w_low; w<w_high ;w++){
+	    vector <Double_t> tempFF;
+	    vector <Double_t> tempCFD;
+	    
+	    theFilter.FastFilterOp(Event->Traces[i],tempFF,FL,FG); //run FF algorithim
+	    tempCFD = theFilter.CFDOp(tempFF,d,w); //run CFD algorithim
+	    Double_t Basetime = 2*(Event->timeLows[i] + Event->timeHighs[i] * 4294967296.0);
+	    Double_t temp = theFilter.GetZeroCrossingOp(tempCFD,num)-traceDelay+Basetime;
+	    
+	    Event->pushSoftwareTime(Event->channels[i],FL,FG,d,w,temp);
+	  }
+	}
+      }
+    }
+  }
 
 
 

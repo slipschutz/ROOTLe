@@ -1,6 +1,6 @@
 LENDAHEAD=$(shell echo $$LENDAHEAD)
 CXX=$(shell root-config --cxx)
-CFLAGS=-c -g -Wall $(shell root-config --cflags) -std=c++0x
+CFLAGS=-c -g -Wall $(shell root-config --cflags) -std=c++0x -O3
 INCLUDES= -I./include -I$(LENDAHEAD)/LendaCommonInclude
 LDLIBS=$(shell root-config --glibs)
 LDFLAGS=$(shell root-config --ldflags)
@@ -25,7 +25,7 @@ all: $(LIBRARY)
 
 $(LIBRARY) : $(OBJECT) $(EXTRAOBJS) $(DICTOBJ) $(EXTRAHEADS) $(HEAD) 
 	@echo "Building Library"
-	@$(CXX) `root-config --cflags` -fPIC -shared -o $@ $^
+	@$(CXX) -O3 `root-config --cflags` -fPIC -shared -o $@ $^
 	@echo "Build succeed"
 
 %Dictionary.o : %.hh $(EXTRAHEADS) %LinkDef.h

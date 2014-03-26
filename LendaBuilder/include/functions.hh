@@ -166,8 +166,11 @@ void packEvent(LendaEvent *Event,vector <Sl_Event> inEvents,
     thePacker->SetJEntry(events[i]->jentry);   
     thePacker->CalcAll();
     thePacker->PackEvent(Event);
-    
   }
+  
+  if (Event->times.size()==4)
+    thePacker->PackManySoftwareTimes(Event);
+
 
 
 

@@ -1,5 +1,5 @@
 CXX=$(shell root-config --cxx)
-CFLAGS=-c -g -Wall $(shell root-config --cflags) -I./src -I ./include 
+CFLAGS=-c -g -Wall $(shell root-config --cflags) -I./src -I./include -O3
 LDLIBS=$(shell root-config --glibs)
 LDFLAGS=$(shell root-config --ldflags)
 #SOURCES=./src/SL_Event.cc ./src/FileManager.cc ./src/Filter.cc
@@ -25,7 +25,7 @@ all: $(LIBRARY)
 
 $(LIBRARY) : $(OBJECT) $(HEAD)
 	@echo "Building Library"
-	@$(CXX) `root-config --cflags` -fPIC -shared -o $@ $^
+	@$(CXX) -O3 `root-config --cflags` -fPIC -shared -o $@ $^
 	@echo "Build succeed"
 %.o : %.cc
 	@echo "Compiling" $< "..."

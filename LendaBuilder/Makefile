@@ -27,7 +27,8 @@ all: $(EXECUTABLE)
 
 $(EXECUTABLE) : $(OBJECTS) $(MAINO)
 	@echo "Building target" $@ "..." 
-	$(CXX) $(LDFLAGS) -o $@ $(OBJECTS) $(MAINO) $(LDLIBS) $(LENDALIBS) -Wl,-rpath,../Libs -L../Libs
+	@echo $(shell pwd)
+	$(CXX) -O3 $(LDFLAGS) -o $@ $(OBJECTS) $(MAINO) $(LDLIBS) $(LENDALIBS) -Wl,-rpath,$(shell pwd)/../Libs -L../Libs
 	@echo
 	@echo "Build succeed"
 
