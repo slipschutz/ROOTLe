@@ -113,12 +113,13 @@ void LendaPacker::PackEvent(LendaEvent * Event){
   Event->pushTime(theChannel->time);
   Event->pushTimeLow(theChannel->timelow);
   Event->pushTimeHigh(theChannel->timehigh);
-  Event->pushSoftTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0) +softwareCFD);
-    //  Event->pushSoftTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0) - theChannel->GetCFDTriggerSourceBit()+softwareCFD)
+  Event->pushSoftTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0) +
+		      softwareCFD -theChannel->GetCFDTriggerSourceBit());
+  //  Event->pushSoftTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0) - theChannel->GetCFDTriggerSourceBit()+softwareCFD)
   Event->pushSoftwareCFD(softwareCFD);
   Event->pushCubicCFD(cubicCFD);
   Event->pushCubicTime(theChannel->timelow +theChannel->timehigh*4294967296.0+cubicCFD);//WRong
-  Event->pushInternalCFD((theChannel->timecfd)/65536.0);
+  Event->pushInternalCFD((theChannel->timecfd)/32768.0);
   Event->pushEntryNum(jentry);
   Event->pushNumZeroCrossings(numZeroCrossings);
   Event->pushPulseHeight(thisEventsPulseHeight);

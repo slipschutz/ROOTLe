@@ -220,8 +220,8 @@ Double_t Filter::GetZeroCrossing(std::vector <Double_t> & CFD,Int_t & NumZeroCro
   std::vector <Double_t> thisEventsZeroCrossings(0);
   Double_t MaxValue=0;
   Int_t MaxIndex=-1;
-
-  for (int j=(CFD.size()/2.0)-20;j< (int) (CFD.size()/2.0)+20;j++) { 
+  int Window=40;
+  for (int j=(CFD.size()/2.0)-Window;j< (int) (CFD.size()/2.0)+Window;j++) { 
     if (CFD[j] >= 0 && CFD[j+1] < 0 && 
 	TMath::Abs(CFD[j] - CFD[j+1]) > 5)
       {//zero crossing point
