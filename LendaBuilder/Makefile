@@ -18,7 +18,7 @@ MAINO=./src/$(addsuffix .o,$(EXE))
 ROOTCINT=rootcint
 
 ######### .so libraries
-LENDALIBS=-lLendaEvent -lDDASEvent -lSettings -lFilter -lLendaPacker
+LENDALIBS=-lLendaEvent -lDDASEvent250 -lSettings -lFilter -lLendaPacker
 
 
 .PHONY: clean get put all test sclean

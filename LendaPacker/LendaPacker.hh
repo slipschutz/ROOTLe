@@ -9,7 +9,7 @@
 #include "Filter.hh"
 #include <vector>
 #include "LendaEvent.hh"
-#include "DDASEvent.h"
+#include "DDASEvent250.h"
 //#include "ddaschannel.h"
 class LendaPacker {
 
@@ -48,7 +48,8 @@ public:
   void PackManySoftwareTimes(LendaEvent *Event);
   
 
-  void PackEvent(LendaEvent* Event);
+  void PackEvent250(LendaEvent* Event);//Packer for 250 type events
+
   void RePackEvent(LendaEvent* Event);
 
 private:

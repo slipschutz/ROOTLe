@@ -96,7 +96,7 @@ void LendaPacker::CalcEnergyGates(){
   // }
 }
 
-void LendaPacker::PackEvent(LendaEvent * Event){
+void LendaPacker::PackEvent250(LendaEvent * Event){
 
 
   Event->pushTrace(theChannel->trace);//save the trace for later 
@@ -113,8 +113,7 @@ void LendaPacker::PackEvent(LendaEvent * Event){
   Event->pushTime(theChannel->time);
   Event->pushTimeLow(theChannel->timelow);
   Event->pushTimeHigh(theChannel->timehigh);
-  Event->pushSoftTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0) +
-		      softwareCFD -theChannel->GetCFDTriggerSourceBit());
+  Event->pushSoftTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0)+softwareCFD -theChannel->GetCFDTriggerSourceBit());
   //  Event->pushSoftTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0) - theChannel->GetCFDTriggerSourceBit()+softwareCFD)
   Event->pushSoftwareCFD(softwareCFD);
   Event->pushCubicCFD(cubicCFD);

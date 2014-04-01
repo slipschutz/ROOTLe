@@ -3,7 +3,7 @@
 /* DDAS channel event.                   */
 /*****************************************/
 
-#include "ddaschannel.h"
+#include "ddaschannel250.h"
 
 
 ClassImp(ddaschannel);

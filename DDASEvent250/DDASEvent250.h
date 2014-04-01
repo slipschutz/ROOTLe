@@ -11,7 +11,7 @@
 
 #include <vector>
 #include <TObject.h>
-#include "ddaschannel.h"
+#include "ddaschannel250.h"
 
 class DDASEvent : public TObject
 {

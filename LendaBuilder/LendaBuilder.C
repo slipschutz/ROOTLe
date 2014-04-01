@@ -20,8 +20,8 @@
 
 //Local Headers
 #include "LendaEvent.hh"
-#include "ddaschannel.h"
-#include "DDASEvent.h"
+#include "ddaschannel250.h"
+#include "DDASEvent250.h"
 #include "Filter.hh"
 #include "FileManager.h"
 #include "InputManager.hh"

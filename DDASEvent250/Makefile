@@ -1,12 +1,12 @@
 CXX=$(shell root-config --cxx)
-CFLAGS=-c -g -Wall $(shell root-config --cflags) -I./src -I ./include
+CFLAGS=-c -g -Wall $(shell root-config --cflags) -I./src -I../Headers
 LDLIBS=$(shell root-config --glibs)
 LDFLAGS=$(shell root-config --ldflags)
 #SOURCES=./src/SL_Event.cc ./src/FileManager.cc ./src/Filter.cc
 
 ROOTCINT=rootcint
 
-NAME=DDASEvent
+NAME=DDASEvent250
 temp= $(addprefix lib,$(NAME))
 #temp2=$(addsuffix $(LDFLAGS),$(temp))
 LIBRARY= $(addsuffix .so,$(temp))
@@ -14,8 +14,8 @@ DICTNAME=$(addsuffix Dictionary,$(NAME))
 DICTOBJ=$(addsuffix .o,$(DICTNAME))
 OBJECTS=$(addsuffix .o, $(NAME))
 
-EXTRAOBJ=ddaschannel.o
-EXTRADICTHEADERS=ddaschannel.h
+EXTRAOBJ=ddaschannel250.o
+EXTRADICTHEADERS=ddaschannel250.h
 
 .PHONY: clean get put all test sclean
 
