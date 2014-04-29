@@ -10,6 +10,7 @@
 #include <vector>
 #include "LendaEvent.hh"
 #include "DDASEvent.h"
+#include <math.h>
 //#include "ddaschannel.h"
 class LendaPacker {
 
@@ -45,7 +46,7 @@ public:
   Double_t softwareCFD;
   Double_t start;
   
-  void PackManySoftwareTimes(LendaEvent *Event);
+  void RePackSoftwareTimes(LendaEvent *Event);
   
 
   void PackEvent(LendaEvent* Event);

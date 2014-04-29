@@ -285,7 +285,10 @@ Double_t Filter::GetZeroCubic(std::vector <Double_t> & CFD){
   std::map <double,int> zeroCrossings;
   double max=0;
 
-  for (int i =0;i<(int)CFD.size()-1;i++){
+  int begin = (CFD.size()/2)-10;
+  int end = (CFD.size()/2)+10;
+
+  for (int i =begin;i<end;i++){
     if (CFD[i]>0 && CFD[i+1]<0){
       double val = CFD[i] - CFD[i+1];
       if ( val > max)
@@ -294,8 +297,9 @@ Double_t Filter::GetZeroCubic(std::vector <Double_t> & CFD){
       zeroCrossings[val]=i;
     }
   }
-
+  
   int theSpotAbove = zeroCrossings[max];
+
   Double_t x[4];
   TMatrixD Y(4,1);//a column vector
   
@@ -340,7 +344,7 @@ Double_t Filter::GetZeroCubic(std::vector <Double_t> & CFD){
       
     double mid = (left+right)/2.0;
     double midVal = getFunc(Coeffs,mid);
- 
+    
 
     if (midVal > 0)
       left=mid;

@@ -89,6 +89,7 @@ void LendaEvent::Clear(){
   times.clear();
   timeLows.clear();
   timeHighs.clear();
+  CFDTrigBits.clear();
   energies.clear();
   energiesCor.clear();
   internEnergies.clear();
@@ -182,7 +183,9 @@ void LendaEvent::pushTimeLow(UInt_t t){
 void LendaEvent::pushTimeHigh(UInt_t t){
   timeHighs.push_back(t);
 }
-
+void LendaEvent::pushCFDTrigBit(UInt_t t){
+  CFDTrigBits.push_back(t);
+}
 
 void LendaEvent::pushSoftwareTime(int channel,int FL,int FG,int d,int w,Double_t time){
   vector <int> temp{channel,FL,FG,d,w};

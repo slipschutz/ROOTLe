@@ -78,6 +78,7 @@ public:
   vector <Double_t> longGates;  //long gate energies
 
   vector <Double_t> pulseHeights;
+  vector <UInt_t> CFDTrigBits;
 
   //The Traces and Filters
   vector < vector <UShort_t> > Traces; // a vector of vectors holding the traces if present
@@ -106,7 +107,8 @@ public:
   void pushTimeHigh(UInt_t);
   void pushPulseHeight(Double_t);
   void pushNumZeroCrossings(Int_t);
-       
+  void pushCFDTrigBit(UInt_t);
+
   void pushSoftwareTime(int channel,int FL,int FG,int d,int w,Double_t time);
   Int_t NumOfChannelsInEvent; //The Number of channels associated with this event
 

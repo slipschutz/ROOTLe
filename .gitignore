@@ -10,3 +10,5 @@
 *.gitignore
 *.so
 *LendaBuilder
+TimmingAnalyzer/TimmingAnalyzer
+*.txt
