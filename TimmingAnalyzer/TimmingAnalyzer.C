@@ -46,7 +46,7 @@ int main(int argc, char **argv){
 
   //prepare files 
   ////////////////////////////////////////////////////////////////////////////////////
-  TFile *inFile = new TFile("~/analysis/run401/FL6FG0d6w10run-0401--softwareCFD.root");
+  TFile *inFile = new TFile("~/analysis/run399/FL1FG4d5w0run-0399--softwareCFD.root");
   TTree* inT = (TTree*)inFile->Get("flt");
   Long64_t nentry=(Long64_t) (inT->GetEntries());
   cout <<"The number of entires is : "<< nentry << endl ;
@@ -56,18 +56,37 @@ int main(int argc, char **argv){
   ////////////////////////////////////////////////////////////////////////////////////
   TFile *outFile = new TFile("Result.root","recreate");
   
-  int FL_low=1;
-  int FL_high=3;
+  int FL_low=2;
+  int FL_high=10;
   int FG_low=0;
-  int FG_high=1;
+  int FG_high=10;
   int w_low=0;
   int w_high=1;
-  int d_low=3;
-  int d_high=4;
+  int d_low=2;
+  int d_high=10;
+
+  Double_t cor[3];
+  Double_t cubicCor[3];
+
+  //Run 399////////////////////
+  cubicCor[0]=-0.295741;
+  cubicCor[1]=0;
+  cubicCor[2]=0;
+  
+  cor[0]=-0.284785;
+  cor[1]=0;
+  cor[2]=0;
+  /////////////////////////////
 
   int NumberOfFilterSets = (FL_high-FL_low)*(FG_high-FG_low)*(w_high-w_low)*(d_high-d_low);
 
   vector <TH1F*> TheHistograms(NumberOfFilterSets);
+  vector <TH1F*> TheCubicHistograms(NumberOfFilterSets);
+  vector <TH1F*> TheCubicHistogramsCor(NumberOfFilterSets);
+  vector <TH1F*> TheHistogramsCor(NumberOfFilterSets);
+
+  map < string, int> MapOfRejectedEvents;
+
   stringstream nameStream;
   int count =0;
   for (int FL=FL_low;FL<FL_high;FL++){
@@ -77,6 +96,23 @@ int main(int argc, char **argv){
 	  nameStream.str("");
 	  nameStream<<"FL"<<FL<<"FG"<<FG<<"w"<<w<<"d"<<d;
 	  TheHistograms[count]=new TH1F(nameStream.str().c_str(),"Title",100,-5,5);
+	  MapOfRejectedEvents[nameStream.str()]=0;
+
+	  nameStream.str("");
+	  nameStream<<"FL"<<FL<<"FG"<<FG<<"w"<<w<<"d"<<d<<"cubic";
+	  TheCubicHistograms[count]=new TH1F(nameStream.str().c_str(),"Title",100,-5,5);
+	  //	  MapOfRejectedEvents[nameStream.str()]=0;
+
+	  nameStream.str("");
+	  nameStream<<"FL"<<FL<<"FG"<<FG<<"w"<<w<<"d"<<d<<"cor";
+	  TheHistogramsCor[count]=new TH1F(nameStream.str().c_str(),"Title",100,-5,5);
+	  //      MapOfRejectedEvents[nameStream.str()]=0;
+
+	  nameStream.str("");
+	  nameStream<<"FL"<<FL<<"FG"<<FG<<"w"<<w<<"d"<<d<<"cubicCor";
+	  TheCubicHistogramsCor[count]=new TH1F(nameStream.str().c_str(),"Title",100,-5,5);
+	  //	  MapOfRejectedEvents[nameStream.str()]=0;
+
 	  count++;
 	}
       }
@@ -112,12 +148,12 @@ int main(int argc, char **argv){
   double timeRate=0;
   bool timeFlag=true;
   startTime = clock();
-  //  nentry=1000;
+  nentry=1000;
   for (Long64_t jentry=0; jentry<nentry;jentry++) { // Main analysis loop
 
 
     inT->GetEntry(jentry); // Get the event from the input tree 
-    if (Event->N==2&&Event->channels[0]==0&&Event->channels[1]==1){
+    if (Event->N==2&&Event->channels[0]==0&&Event->channels[1]==1&&TMath::Abs(Event->GOE)<0.7){
       //Loop over the all the filters in the same way as above
       SoftTimes->Fill(Event->softTimes[0]-Event->softTimes[1]);
       int count =0;
@@ -128,7 +164,22 @@ int main(int argc, char **argv){
 	      thePacker->SetFilter(FL,FG,d,w);
 	      thePacker->RePackSoftwareTimes(Event);
 	      //	      TheHistograms[count]->Fill(0.5*(Event->softTimes[0]+Event->softTimes[1]-Event->softTimes[2]-Event->softTimes[3]));
-	      TheHistograms[count]->Fill(Event->softTimes[0]-Event->softTimes[1]);
+
+	      if (Event->softwareCFDs[0]<-100 || Event->softwareCFDs[1]<-100){
+		// cout<<"Software Time extraction failed on "<<jentry<<endl;
+		// cout<<"For Filter "<<FL<<" "<<FG<<" "<<w<<" "<<d<<endl;
+		MapOfRejectedEvents[TheHistograms[count]->GetName()]++;
+	      } else {
+		TheHistograms[count]->Fill(Event->softTimes[0]-Event->softTimes[1]);
+		TheCubicHistograms[count]->Fill(Event->cubicTimes[0]-Event->cubicTimes[1]);
+		
+		Double_t GOE=Event->GOE;
+		Double_t cor1 = cor[0]*GOE + cor[1]*GOE*GOE + cor[2]*GOE*GOE*GOE;
+		Double_t cor2 = cubicCor[0]*GOE + cubicCor[1]*GOE*GOE + cubicCor[2]*GOE*GOE*GOE;
+		TheHistogramsCor[count]->Fill(Event->softTimes[0]-Event->softTimes[1]-cor1);
+		TheCubicHistogramsCor[count]->Fill(Event->softTimes[0]-Event->softTimes[1]-cor2);
+		
+	      }
 	      count++;
 	    }
 	  }
@@ -148,7 +199,7 @@ int main(int argc, char **argv){
       timeRate = timeRate/jentry;
     }
     //Periodic printing
-    if (jentry % 1000 ==0 ){
+    if (jentry % 100 ==0 ){
       cout<<flush<<"\r"<<"                                                                                          "<<"\r";
       cout<<"On Event "<<jentry<<" "<<((double)jentry)/(nentry)*100<<"% minutes remaining "<<(1.0/60)*timeRate*(nentry-jentry)<<" hours remaining "<<(1.0/3600)*timeRate*(nentry-jentry);
     }
@@ -158,32 +209,52 @@ int main(int argc, char **argv){
   }//End main analysis loop
   
 
+  vector < vector <TH1F*> > theVecs;
+  theVecs.push_back(TheHistograms);
+  theVecs.push_back(TheCubicHistograms);
+  theVecs.push_back(TheHistogramsCor);
+  theVecs.push_back(TheCubicHistogramsCor);
+  
+  int NumOfHistVectors=theVecs.size();
+
+
   TF1 * aGauss = new TF1("aGauss","gaus",-2,2);
   TFitResultPtr result;
+  Int_t status;
+  vector <vector<double> > theResolutions(NumOfHistVectors);
+  for (auto & a : theResolutions){
+    a.resize(NumberOfFilterSets);
+  }
 
-  vector <double> theResolutions(NumberOfFilterSets);
   double BestRes=1000;
   string BestName="NONE";
-  for (int i=0;i<NumberOfFilterSets;i++){
-    result = TheHistograms[i]->Fit("aGauss","QSNR");
-    Int_t status=result;
-    if (status==0){
-      theResolutions[i]=result->Value(2)*2.35*4;
-      if (theResolutions[i]<BestRes){
-	BestRes=theResolutions[i];
-	BestName=TheHistograms[i]->GetName();
-      }
-    } else {
-      cout<<"***Bad Fit For "<<TheHistograms[i]->GetName()<<endl;
-    }
 
+
+  for (int i=0;i<NumOfHistVectors;i++){
+    for (int j=0;j<NumberOfFilterSets;j++){
+      result = theVecs[i][j]->Fit("aGauss","QSNR");
+      status=result;
+      if (status==0){
+	theResolutions[i][j]=result->Value(2)*2.35*4;
+	cout<<"Res is "<<theResolutions[i][j]<<endl;
+	if (theResolutions[i][j]<BestRes){
+	  BestRes=theResolutions[i][j];
+	  BestName=theVecs[i][j]->GetName();
+	}
+      } else {
+	cout<<"***Bad Fit For "<<theVecs[i][j]->GetName()<<endl;
+      }
+    }
   }
   
   ofstream out("./TheResoultions.txt");
   for (int i=0;i<theResolutions.size();i++){
-    out<<TheHistograms[i]->GetName()<<"  "<<theResolutions[i]<<endl;
+    for (int j=0;j<theResolutions[i].size();j++){
+      out<<theVecs[i][j]->GetName()<<"  "<<theResolutions[i][j]<<MapOfRejectedEvents[theVecs[i][j]->GetName()]<<endl;
+    }
   }
   out<<endl;
+
 
   //Close the file
   outFile->Write();

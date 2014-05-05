@@ -223,7 +223,7 @@ Double_t Filter::GetZeroCrossing(std::vector <Double_t> & CFD,Int_t & NumZeroCro
   int Window=40;
   for (int j=(CFD.size()/2.0)-Window;j< (int) (CFD.size()/2.0)+Window;j++) { 
     if (CFD[j] >= 0 && CFD[j+1] < 0 && 
-	TMath::Abs(CFD[j] - CFD[j+1]) > 5)
+	TMath::Abs(CFD[j] - CFD[j+1]) > 40)
       {//zero crossing point
 	softwareCFD =j + CFD[j] / ( CFD[j] + TMath::Abs(CFD[j+1]) );
 	thisEventsZeroCrossings.push_back(softwareCFD);
@@ -285,8 +285,8 @@ Double_t Filter::GetZeroCubic(std::vector <Double_t> & CFD){
   std::map <double,int> zeroCrossings;
   double max=0;
 
-  int begin = (CFD.size()/2)-10;
-  int end = (CFD.size()/2)+10;
+  int begin = (CFD.size()/2)-40;
+  int end = (CFD.size()/2)+40;
 
   for (int i =begin;i<end;i++){
     if (CFD[i]>0 && CFD[i+1]<0){

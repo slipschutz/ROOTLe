@@ -1,6 +1,6 @@
 CXX=$(shell root-config --cxx)
-CFLAGS=-c -g -Wall $(shell root-config --cflags) -I./src -I./include -I../Headers -O3
-LDLIBS=$(shell root-config --glibs)
+CFLAGS=-c -g -Wall $(shell root-config --cflags) -I./src -I./include -I../Headers -O3 -std=c++11
+LDLIBS=$(shell root-config --glibs) 
 LDFLAGS=$(shell root-config --ldflags)
 
 #SOURCES=$(shell ls ./src/*.cc)
@@ -24,7 +24,7 @@ all: $(EXECUTABLE)
 $(EXECUTABLE) : $(OBJECTS) $(MAINO)
 	@echo "Building target" $@ "..." 
 	@echo $(shell pwd)
-	$(CXX) -O3 $(LDFLAGS) -o $@ $(OBJECTS) $(MAINO) $(LDLIBS) $(LENDALIBS) -Wl,-rpath,$(shell pwd)/../Libs -L../Libs
+	@$(CXX) -g -std=c++11 -O3 $(LDFLAGS) -o $@ $(OBJECTS) $(MAINO) $(LDLIBS) $(LENDALIBS) -Wl,-rpath,$(shell pwd)/../Libs -L../Libs
 	@echo
 	@echo "Build succeed"
 

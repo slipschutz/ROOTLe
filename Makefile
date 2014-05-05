@@ -1,6 +1,6 @@
 
 
-DIR=Settings DDASEvent LendaEvent LendaPacker LendaFilter LendaBuilder
+DIR=Settings DDASEvent LendaEvent LendaPacker LendaFilter LendaBuilder TimmingAnalyzer
 
 all:
 	@for d in $(DIR); do make -j4 -C $$d  || exit; done

@@ -43,6 +43,7 @@ public:
 
   Double_t PulseShape; //long gate over short gate  //__var
   Double_t GOE;   //Center of Gravity (E1-E2)/(E1+E2)  //__var
+  Double_t GOE2;
   Double_t CorGOE;//Center of Gravity after gain matching //__var
 
   Double_t GammaPeakTime;

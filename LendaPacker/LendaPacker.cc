@@ -161,12 +161,13 @@ void LendaPacker::RePackSoftwareTimes(LendaEvent *Event){
     tempCFD = theFilter.CFD(tempFF,fd,fw); //run CFD algorithim
     Double_t Basetime = 2*(Event->timeLows[i] + Event->timeHighs[i] * 4294967296.0);
     Double_t tempSoftTime=theFilter.GetZeroCrossing(tempCFD,num)-traceDelay;
-    //    tempSoftTime =tempSoftTime-floor(tempSoftTime);
-    Double_t temp = tempSoftTime+Basetime;
+    Double_t tempCubicTime=theFilter.GetZeroCubic(tempCFD)-traceDelay;
 
-
+    Event->softwareCFDs[i]=tempSoftTime;
+    Event->softTimes[i]=tempSoftTime+Basetime;
+    Event->cubicCFDs[i]=tempCubicTime;
+    Event->cubicTimes[i]=tempCubicTime+Basetime;
     
-    Event->softTimes[i]=temp;
   }
 
 

@@ -83,6 +83,7 @@ void LendaEvent::Clear(){
   
   
   GOE=BAD_NUM;
+  GOE2=BAD_NUM;
   CorGOE=BAD_NUM;
   PulseShape=BAD_NUM;
   
@@ -244,7 +245,7 @@ void LendaEvent::Finalize(){
   if (Traces.size()!=0){
     for (int j=0;j<Traces.size();j++){
       for (int i=0;i<Traces[j].size();i++){
-	if ( Traces[j][i]>4094 ){
+	if ( Traces[j][i]>16382 ){
 	  OverFlows[j]=true;
 	  i=Traces[j].size()+1; //End loop over the trace
 	  //if an overflow is found
@@ -263,7 +264,12 @@ void LendaEvent::Finalize(){
     CDt= cubicTimes[0]-cubicTimes[1];
     GOE = (energies[0]-energies[1])/(energies[0]+energies[1]);
     CorGOE = (energiesCor[0]-energiesCor[1])/(energiesCor[0]+energiesCor[1]);
+  } else if (NumOfChannelsInEvent==4){
+    GOE = (energies[0]-energies[1])/(energies[0]+energies[1]);
+    GOE2 = (energies[2]-energies[3])/(energies[2]+energies[3]);
+    
   }
+
 
 
   for (int i=0;i<energies.size();i++){
