@@ -1,7 +1,7 @@
 LENDAHEAD=$(shell echo $$LENDAHEAD)
 CXX=$(shell root-config --cxx)
 CFLAGS=-c -g -Wall $(shell root-config --cflags) -std=c++0x -O3
-INCLUDES= -I./include -I$(LENDAHEAD)/LendaCommonInclude
+INCLUDES= -I./include -I../Headers
 LDLIBS=$(shell root-config --glibs)
 LDFLAGS=$(shell root-config --ldflags)
 #SOURCES=./src/SL_Event.cc ./src/FileManager.cc ./src/Filter.cc
