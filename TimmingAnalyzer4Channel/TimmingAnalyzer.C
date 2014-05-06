@@ -68,7 +68,7 @@ int main(int argc, char **argv){
   Double_t cor[3];
   Double_t cubicCor[3];
 
-  //Run 399////////////////////
+  //Run 401////////////////////
   cubicCor[0]=-0.295741;
   cubicCor[1]=0;
   cubicCor[2]=0;
@@ -153,7 +153,9 @@ int main(int argc, char **argv){
 
 
     inT->GetEntry(jentry); // Get the event from the input tree 
-    if (Event->N==2&&Event->channels[0]==0&&Event->channels[1]==1&&TMath::Abs(Event->GOE)<0.7){
+    if (Event->N==4&&Event->channels[0]==0&&Event->channels[1]==1&&
+	TMath::Abs(Event->GOE)<0.7 &&TMath::Abs(Event->GOE2)<0.7&&Event->OverFlows[0]==0&&Event->OverFlows[1]==0&&
+	Event->OverFlows[2]==0&&Event->OverFlows[3]==0){
       //Loop over the all the filters in the same way as above
       SoftTimes->Fill(Event->softTimes[0]-Event->softTimes[1]);
       int count =0;
@@ -165,7 +167,8 @@ int main(int argc, char **argv){
 	      thePacker->RePackSoftwareTimes(Event);
 	      //	      TheHistograms[count]->Fill(0.5*(Event->softTimes[0]+Event->softTimes[1]-Event->softTimes[2]-Event->softTimes[3]));
 
-	      if (Event->softwareCFDs[0]<-100 || Event->softwareCFDs[1]<-100){
+	      if (Event->softwareCFDs[0]<-100 || Event->softwareCFDs[1]<-100||
+		  Event->softwareCFDs[2]<-100 || Event->softwareCFDs[3]<-100){
 		// cout<<"Software Time extraction failed on "<<jentry<<endl;
 		// cout<<"For Filter "<<FL<<" "<<FG<<" "<<w<<" "<<d<<endl;
 		MapOfRejectedEvents[TheHistograms[count]->GetName()]++;
