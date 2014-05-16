@@ -65,13 +65,17 @@ public:
   vector <Double_t> times; //the times
   vector <UInt_t> timeLows; //the timelows
   vector <UInt_t> timeHighs; //the timeHighs
+
   vector <Double_t> softTimes;
   vector <Double_t> cubicTimes;
+  vector <Double_t> cubicFitTimes;
+
   vector <Double_t> energies; // the raw energies
   vector <Double_t> internEnergies;
   vector <Double_t> channels; // the channels
   vector <Double_t> softwareCFDs;
   vector <Double_t> cubicCFDs;
+  vector <Double_t> cubicFitCFDs;
   vector <Double_t> internalCFDs;
   vector <Long64_t> entryNums;
 
@@ -103,7 +107,9 @@ public:
   void pushSoftTime(Double_t);
   void pushEntryNum(Long64_t);
   void pushCubicTime(Double_t);
+  void pushCubicFitTime(Double_t);
   void pushCubicCFD(Double_t);
+  void pushCubicFitCFD(Double_t);
   void pushTimeLow(UInt_t);
   void pushTimeHigh(UInt_t);
   void pushPulseHeight(Double_t);

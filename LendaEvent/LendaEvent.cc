@@ -99,7 +99,12 @@ void LendaEvent::Clear(){
   internalCFDs.clear();
   softTimes.clear();
   cubicTimes.clear();
+  cubicFitTimes.clear();
+
   cubicCFDs.clear();
+  cubicFitCFDs.clear();
+
+  
   OverFlows.clear();
   pulseHeights.clear();
 
@@ -161,8 +166,15 @@ void LendaEvent::pushEntryNum(Long64_t t){
 void LendaEvent::pushCubicTime(Double_t t){
   cubicTimes.push_back(t);
 }
+void LendaEvent::pushCubicFitTime(Double_t t){
+  cubicFitTimes.push_back(t);
+}
+
 void LendaEvent::pushCubicCFD(Double_t t){
   cubicCFDs.push_back(t);
+}
+void LendaEvent::pushCubicFitCFD(Double_t t){
+  cubicFitCFDs.push_back(t);
 }
 
 void LendaEvent::pushLongGate(Double_t lg){

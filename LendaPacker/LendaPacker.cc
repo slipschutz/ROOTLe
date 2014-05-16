@@ -51,6 +51,7 @@ void LendaPacker::Reset(){
   longGate=0;
   shortGate=0;
   cubicCFD=0;
+  cubicFitCFD=0;
   softwareCFD=0;
   start=0;
   numZeroCrossings=0;
@@ -73,7 +74,7 @@ void LendaPacker::CalcTimeFilters(){
   //  softwareCFD=softwareCFD-1;
   //  softwareCFD=softwareCFD-floor(softwareCFD);
   cubicCFD = theFilter.GetZeroCubic(thisEventsCFD)-traceDelay;
-  //  cout<<cubicCFD<<endl;
+  cubicFitCFD=theFilter.GetZeroFitCubic(thisEventsCFD)-traceDelay;
  
 }
 void LendaPacker::CalcEnergyGates(){
@@ -126,7 +127,11 @@ void LendaPacker::PackEvent(LendaEvent * Event){
 
   Event->pushSoftwareCFD(softwareCFD);
   Event->pushCubicCFD(cubicCFD);
+  Event->pushCubicFitCFD(cubicFitCFD);
+
   Event->pushCubicTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0)+cubicCFD);
+  Event->pushCubicFitTime(2*(theChannel->timelow + theChannel->timehigh * 4294967296.0)+cubicFitCFD);
+
   Event->pushInternalCFD((theChannel->timecfd)/32768.0);
   Event->pushEntryNum(jentry);
   Event->pushNumZeroCrossings(numZeroCrossings);
