@@ -171,6 +171,50 @@ void packEvent(LendaEvent *Event,vector <Sl_Event> inEvents,
    
 
 
+}
+
+
+
+void PackEventClean(LendaEvent *Event,DDASEvent *theDDASEvent,
+		    LendaPacker * thePacker,Long64_t jentry){
+  ////////////////////////////////////////////////////////////////////
+  //////////////Get the ddaschannels form the DDASEVent///////////////
+  vector <ddaschannel*> theDDASChannels = theDDASEvent->GetData();
+  
+
+  //sort the events by channel using a Merge sort
+  //Only expecting on module right now
+  vector <ddaschannel*> eventsTemp(16,NULL); // temp Vector to hold events
+  vector <ddaschannel*> eventsSorted; //the final sorted vector
+  bool test=false;
+  for (int i=0;i<(int)theDDASChannels.size();i++){
+    if (eventsTemp[theDDASChannels[i]->chanid] == NULL )
+      eventsTemp[theDDASChannels[i]->chanid]=theDDASChannels[i];
+    else {
+      //if there is already something there. IE a pile up occured where there
+      //were two instances of the same channel in an Event. Put the event in 
+      //the next spot with std::vector::insert
+      eventsTemp.insert(eventsTemp.begin()+theDDASChannels[i]->chanid,theDDASChannels[i]);
+      cout<<"********WARNING Found Pile up Event********"<<endl;
+    }
+  }
+  //Now copy non empty spots in the vector to the final sorted vector
+  for (int i=0;i<(int)eventsSorted.size();i++){
+    if (eventsTemp[i] !=NULL )
+      eventsSorted.push_back(eventsTemp[i]);
+  }
+  //Now call the Packer to build the Event
+  for (int i=0;i<(int)eventsSorted.size();++i){
+    thePacker->SetDDASChannel(eventsSorted[i]);//Set the current ddaschannel
+    thePacker->SetJEntry(jentry);   //set jEntry (just to save it in final tree)
+    thePacker->CalcAll(); //call all the waveform analysis steps
+    thePacker->PackEvent(Event); //push all the results on to the final LendEvent
+  }
+  
+  
+  
+
+}
 
 
 
@@ -245,4 +289,4 @@ void packEvent(LendaEvent *Event,vector <Sl_Event> inEvents,
   //  Event->Finalize(); //Finalize Calculates various parameters and applies corrections
 
 */
-}
+
