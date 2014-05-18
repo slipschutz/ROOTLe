@@ -5,15 +5,7 @@
 
 
 #include "Filter.hh"
-
-#include "TFile.h"
-#include "TMath.h"
-#include "TGraph.h"
-#include "TFitResult.h"
-#include "TF1.h"
-
-#include <sstream>
-using namespace std;
+#define BAD_NUM -10008
 
 Filter::Filter()
 {
@@ -175,6 +167,10 @@ void Filter:: FastFilterFull(std::vector <UShort_t> &trace,
 }
 
 
+
+/*
+Software implementation of the PIXIE CFD algorithm
+*/
 std::vector <Double_t> Filter::CFD(std::vector <Double_t> &thisEventsFF,
 				   Double_t CFD_delay,
 				   Double_t CFD_scale_factor){
@@ -191,7 +187,14 @@ std::vector <Double_t> Filter::CFD(std::vector <Double_t> &thisEventsFF,
   return thisEventsCFD;
 
 }
+////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////
 
+/*
+Software implementation of the PIXIE CFD algorithm where only the area near 
+the center of the trace is calculated.  IE it starts -15% of trace length from
+center and goes to +15% trace length from the center
+*/
 std::vector <Double_t> Filter::CFDOp(std::vector <Double_t> &thisEventsFF,
 				   Double_t CFD_delay,
 				   Double_t CFD_scale_factor){
@@ -212,7 +215,7 @@ std::vector <Double_t> Filter::CFDOp(std::vector <Double_t> &thisEventsFF,
 }
 
 
-#define BAD_NUM -10008
+
 
 Double_t Filter::GetZeroCrossing(std::vector <Double_t> & CFD,Int_t & NumZeroCrossings){
 
@@ -277,7 +280,7 @@ Double_t Filter::GetZeroCrossingOp(std::vector <Double_t> & CFD,Int_t & NumZeroC
 
 
 
-#include <map>
+
 
 Double_t Filter::GetZeroCubic(std::vector <Double_t> & CFD){
   
@@ -366,10 +369,118 @@ Double_t Filter::GetZeroCubic(std::vector <Double_t> & CFD){
  
 }
 
+
+
+
+Double_t Filter::GetZeroFitCubic(std::vector <Double_t> & CFD){
+  
+
+  //Find the largest zero Crossing
+  std::map <double,int> zeroCrossings;
+  double max=0;
+  
+  //restrict search to center part of tace
+  int begin = (CFD.size()/2)-40;
+  int end = (CFD.size()/2)+40;
+
+  for (int i =begin;i<end;i++){
+    if (CFD[i]>0 && CFD[i+1]<0){
+      double val = CFD[i] - CFD[i+1];
+      if ( val > max)
+	max = val;
+      //put this crossing in map
+      zeroCrossings[val]=i;
+    }
+  }
+  //Take the spot before out of map
+  int theSpotAbove = zeroCrossings[max];
+
+  //Points to consider are { spotAbove-2,spotAbove-1,
+  //spotAbove, spotBelow, spotBelow+1,spotBelow+2}
+  //
+  //  Use fitting to find 3rd order polynomial from these 6 points
+  //
+
+  
+
+  Double_t x[6];
+  Double_t y[6];
+  for (int i=0;i<6;i++){
+    x[i]= theSpotAbove -2+ i; //first point is the one before zerocrossing
+    y[i]=CFD[theSpotAbove -2+i];
+  }
+  TGraph theGraphForFitting(6,x,y);
+  
+  TFitResultPtr fitPointer =  theGraphForFitting.Fit("pol3","QSN");
+  Int_t status = fitPointer;
+  
+  
+  if ( status == 0){ // if the Fit was a success
+    vector<double> Coeffs(4);//3rd order polynomial should have 4 coeffs
+    Coeffs[0]=fitPointer->Value(0);
+    Coeffs[1]=fitPointer->Value(1);
+    Coeffs[2]=fitPointer->Value(2);
+    Coeffs[3]=fitPointer->Value(3);
+  
+
+    //the x[1] is theSpot above so start there
+    bool notDone =true;
+    double left = x[2];//initial above should be in 3rd spot 
+    double right =x[3];//initial below should be in 4th spot
+    double valUp = getFunc(Coeffs,left);
+    double valDown =getFunc(Coeffs,right);
+    int loopCount=0;
+    while (notDone){
+      loopCount++;
+      if (TMath::Abs(TMath::Abs(valUp)-TMath::Abs(valDown) ) <0.001)
+	notDone = false;
+      
+      double mid = (left+right)/2.0;
+      double midVal = getFunc(Coeffs,mid);
+    
+
+      if (midVal > 0)
+	left=mid;
+      else 
+	right=mid;
+    
+      valUp = getFunc(Coeffs,left);
+      valDown =getFunc(Coeffs,right);
+      if (loopCount >30 ){//kill stuck loop
+	notDone=false;
+	left =BAD_NUM;
+      }
+
+    }
+    return left;
+  } else {// End Fit Status If
+    cout<<"FIT FAILED"<<endl;
+    return BAD_NUM;
+  }
+
+ 
+}
+
+
+
+
+
+
+
+
+
 double Filter::getFunc(TMatrixD Coeffs,double x){
   double total =0;
   for (int i=0;i<4;i++){
     total = total + Coeffs[i][0]*TMath::Power(x,3-i);
+  }
+  return total;
+
+}
+double Filter::getFunc(vector<double> &Coeffs,double x){
+  double total =0;
+  for (int i=0;i<4;i++){
+    total = total + Coeffs[i]*TMath::Power(x,i);
   }
   return total;
 

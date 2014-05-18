@@ -38,13 +38,6 @@ public:
   vector <Double_t> thisEventsCFD;
 
 
-  Double_t thisEventsIntegral;
-  Double_t thisEventsPulseHeight;
-  Double_t longGate;
-  Double_t shortGate;
-  Double_t cubicCFD;
-  Double_t softwareCFD;
-  Double_t start;
   
   void RePackSoftwareTimes(LendaEvent *Event);
   
@@ -60,6 +53,16 @@ private:
   Long64_t jentry;
 
   Int_t numZeroCrossings;
+  
+  Double_t thisEventsIntegral;
+  Double_t thisEventsPulseHeight;
+  Double_t longGate;
+  Double_t shortGate;
+  Double_t cubicCFD;
+  Double_t cubicFitCFD;
+  Double_t softwareCFD;
+  Double_t start;
+
   
 
 };
