@@ -171,13 +171,13 @@ int main(int argc, char **argv){
 		MapOfRejectedEvents[TheHistograms[count]->GetName()]++;
 	      } else {
 		TheHistograms[count]->Fill(Event->softTimes[0]-Event->softTimes[1]);
-		TheCubicHistograms[count]->Fill(Event->cubicTimes[0]-Event->cubicTimes[1]);
+		TheCubicHistograms[count]->Fill(Event->cubicFitTimes[0]-Event->cubicFitTimes[1]);
 		
 		Double_t GOE=Event->GOE;
 		Double_t cor1 = cor[0]*GOE + cor[1]*GOE*GOE + cor[2]*GOE*GOE*GOE;
 		Double_t cor2 = cubicCor[0]*GOE + cubicCor[1]*GOE*GOE + cubicCor[2]*GOE*GOE*GOE;
 		TheHistogramsCor[count]->Fill(Event->softTimes[0]-Event->softTimes[1]-cor1);
-		TheCubicHistogramsCor[count]->Fill(Event->softTimes[0]-Event->softTimes[1]-cor2);
+		TheCubicHistogramsCor[count]->Fill(Event->cubicFitTimes[0]-Event->cubicFitTimes[1]-cor2);
 		
 	      }
 	      count++;
