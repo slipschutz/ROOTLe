@@ -94,7 +94,11 @@ void LendaEvent::Clear(){
   energies.clear();
   energiesCor.clear();
   internEnergies.clear();
+
   channels.clear();
+  slots.clear();
+  globalIDs.clear();
+
   softwareCFDs.clear();
   internalCFDs.clear();
   softTimes.clear();
@@ -137,6 +141,12 @@ void LendaEvent::pushEnergy(Double_t e){
 }
 void LendaEvent::pushChannel(Int_t c){
   channels.push_back(c);
+}
+void LendaEvent::pushSlot(Int_t c){
+ slots.push_back(c);
+}
+void LendaEvent::pushGlobalID(Int_t c){
+  globalIDs.push_back(c);
 }
 
 void LendaEvent::pushTrace(vector <UShort_t> in){

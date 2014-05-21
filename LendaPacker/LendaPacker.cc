@@ -115,12 +115,14 @@ void LendaPacker::MakeLendaEvent(LendaEvent *Event,DDASEvent *theDDASEvent,
   
   //sort the events by channel using a Merge sort
   //Only expecting on module right now
-  vector <ddaschannel*> eventsTemp(16,NULL); // temp Vector to hold events
+  vector <ddaschannel*> eventsTemp(16*12,NULL); // temp Vector to hold events in all channels/slots
   vector <ddaschannel*> eventsSorted; //the final sorted vector
   bool test=false;
   for (int i=0;i<(int)theDDASChannels.size();i++){
-    if (eventsTemp[theDDASChannels[i]->chanid] == NULL )
-      eventsTemp[theDDASChannels[i]->chanid]=theDDASChannels[i];
+    int GlobalID = theDDASChannels[i]->chanid + 16* (theDDASChannels[i]->slotid-2);
+    if (GlobalID >= 16*12){cout<<"Can Not sort DDAS events. Too many channels"<<endl;throw;}
+    if (eventsTemp[GlobalID] == NULL )
+      eventsTemp[GlobalID]=theDDASChannels[i];
     else {
       //if there is already something there. IE a pile up occured where there
       //were two instances of the same channel in an Event. Put the event in 
@@ -160,7 +162,11 @@ void LendaPacker::PackEvent(LendaEvent * Event){
   //Push other thing into the event
   Event->pushLongGate(longGate); //longer integration window
   Event->pushShortGate(shortGate);//shorter integration window
+
   Event->pushChannel(theChannel->chanid);//the channel for this pulse
+  Event->pushSlot(theChannel->slotid);
+  Event->pushGlobalID(theChannel->chanid+ 16*(theChannel->slotid-2));
+
   Event->pushEnergy(thisEventsIntegral);;//push trace energy if therex
   Event->pushInternEnergy(theChannel->energy);//push internal energy
   Event->pushTime(theChannel->time);

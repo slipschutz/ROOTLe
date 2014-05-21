@@ -57,8 +57,8 @@ public:
   inline vector <Double_t> GetInternalEnergies(){return internEnergies;}
 
   inline vector <Int_t> GetChannels(){return channels;}
-
-
+  inline vector <Int_t> GetSlots(){return slots;}
+  inline vector <Int_t> GetGlobalIDs(){return globalIDs;}
   
 
   //Main information holders
@@ -76,7 +76,11 @@ public:
 
   vector <Double_t> energies; // the raw energies
   vector <Double_t> internEnergies;
+
   vector <Int_t> channels; // the channels
+  vector <Int_t> slots; // the slots that had firings in it
+  vector <Int_t> globalIDs;// the Global ID counting from left most module 
+
   vector <Double_t> softwareCFDs;
   vector <Double_t> cubicCFDs;
   vector <Double_t> cubicFitCFDs;
@@ -102,7 +106,11 @@ public:
   void pushEnergy(Double_t);
   void pushInternEnergy(Double_t);
   void pushTime(Double_t);
+
   void pushChannel(Int_t);
+  void pushSlot(Int_t);
+  void pushGlobalID(Int_t);
+
   void pushTrace (vector <UShort_t>);
   void pushFilter (vector <Double_t>);
   void pushCFD (vector <Double_t>);
