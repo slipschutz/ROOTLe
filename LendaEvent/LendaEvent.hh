@@ -27,40 +27,44 @@ public:
   Double_t ShiftTOFInternal; //Shift TOF for internal Tumes 
   Double_t TOFEnergy;
   Double_t TOFEnergyInternal;
-
-
   Bool_t ErrorBit;
-  
-  Bool_t lean;//Flag for whether to save traces/filters
-
   Double_t CDt;//__var
-
   Int_t N;
-
-
-  
   Int_t NumBadPoints;//__var
-
   Double_t PulseShape; //long gate over short gate  //__var
   Double_t GOE;   //Center of Gravity (E1-E2)/(E1+E2)  //__var
   Double_t GOE2;
   Double_t CorGOE;//Center of Gravity after gain matching //__var
 
+  
+
+
+  Bool_t lean;//Flag for whether to save traces/filters
   Double_t GammaPeakTime;
   Double_t GammaPeakTimeLiqLiq;
-  
   Double_t TOFFudge;
+  Int_t NumOfChannelsInEvent; //The Number of channels associated with this event  
+
   
-  vector <Bool_t> OverFlows;
-  vector <Int_t > ZeroCrossings;
-  //  vector<Double_t> Corrections;
-  //  #ifndef __CINT__
-  map <vector<Int_t>,Double_t> SoftwareTimes;
-  //  #endif
-  Double_t GetSoftwareTime(int channel,int FL,int FG,int d, int w);
-  Double_t GetTimeRes(int FL,int FG,int d,int w);
+  inline vector <Bool_t> GetOverFlows(){return OverFlows;}
+  inline vector <Int_t> GetZeroCrossings(){return ZeroCrossings;}
+
+  inline vector <Double_t> GetTimes(){return times;}
+  inline vector <Double_t> GetSoftTimes(){return softTimes;}
+  inline vector <Double_t> GetCubicTimes(){return cubicTimes;}
+  
+  inline vector <Double_t> GetEnergies(){return energies;}
+  inline vector <Double_t> GetInternalEnergies(){return internEnergies;}
+
+  inline vector <Int_t> GetChannels(){return channels;}
+
+
+  
 
   //Main information holders
+  vector <Bool_t> OverFlows;
+  vector <Int_t > ZeroCrossings;
+
   vector <Double_t> energiesCor; //the corrected energies 
   vector <Double_t> times; //the times
   vector <UInt_t> timeLows; //the timelows
@@ -72,7 +76,7 @@ public:
 
   vector <Double_t> energies; // the raw energies
   vector <Double_t> internEnergies;
-  vector <Double_t> channels; // the channels
+  vector <Int_t> channels; // the channels
   vector <Double_t> softwareCFDs;
   vector <Double_t> cubicCFDs;
   vector <Double_t> cubicFitCFDs;
@@ -98,7 +102,7 @@ public:
   void pushEnergy(Double_t);
   void pushInternEnergy(Double_t);
   void pushTime(Double_t);
-  void pushChannel(Double_t);
+  void pushChannel(Int_t);
   void pushTrace (vector <UShort_t>);
   void pushFilter (vector <Double_t>);
   void pushCFD (vector <Double_t>);
@@ -116,8 +120,8 @@ public:
   void pushNumZeroCrossings(Int_t);
   void pushCFDTrigBit(UInt_t);
 
-  void pushSoftwareTime(int channel,int FL,int FG,int d,int w,Double_t time);
-  Int_t NumOfChannelsInEvent; //The Number of channels associated with this event
+
+
 
 
   //Corrections setting methods

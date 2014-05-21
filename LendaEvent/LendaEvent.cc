@@ -118,8 +118,7 @@ void LendaEvent::Clear(){
   longGates.clear();
   ZeroCrossings.clear();
   
-  // heDynamicCorrectionResults.clear();
-  SoftwareTimes.clear();
+
 
   NumOfChannelsInEvent=0;
   N=0;
@@ -136,7 +135,7 @@ void LendaEvent::pushEnergy(Double_t e){
   energies.push_back(e);
 
 }
-void LendaEvent::pushChannel(Double_t c){
+void LendaEvent::pushChannel(Int_t c){
   channels.push_back(c);
 }
 
@@ -200,37 +199,6 @@ void LendaEvent::pushCFDTrigBit(UInt_t t){
   CFDTrigBits.push_back(t);
 }
 
-void LendaEvent::pushSoftwareTime(int channel,int FL,int FG,int d,int w,Double_t time){
-  vector <int> temp{channel,FL,FG,d,w};
-  if (SoftwareTimes.count(temp) ==0 ){ //If there isn't a time there already
-    SoftwareTimes[temp]=time;
-  }else{///
-    cout<<"***Warning SoftwareTime for Filter set already present in Event"<<endl;
-  }
-}
-Double_t LendaEvent::GetSoftwareTime(int channel,int FL,int FG,int d, int w){
-  vector <int> temp{channel,FL,FG,d,w};
-  if (SoftwareTimes.count(temp) ==0){
-    return -1;
-  }
-  return SoftwareTimes[temp];
-}
-
-Double_t LendaEvent::GetTimeRes(int FL,int FG,int d,int w){
-  if (N != 4){
-    cout<<"***Not an N=4 event"<<endl;
-    return -1;
-  } else {
-    return 0.5*(GetSoftwareTime(0,FL,FG,d,w)+GetSoftwareTime(1,FL,FG,d,w)-GetSoftwareTime(2,FL,FG,d,w)-GetSoftwareTime(3,FL,FG,d,w));
-  }
-}
-
-void LendaEvent::PrintSoftwareTimes(){
-  //Method to print the SoftwareTimes that have been pushed
-  for (map<vector<int>,Double_t>::iterator ii =SoftwareTimes.begin();ii!=SoftwareTimes.end();ii++){
-    printf("Channel %4d Rise %4d Gap %4d Dealy %4d Scale Factor %4d Time %8.4lf\n",ii->first[0],ii->first[1],ii->first[2],ii->first[3],ii->first[4],ii->second);
-  }
-}
 
 void LendaEvent::gainCor(){
 

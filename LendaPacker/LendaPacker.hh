@@ -37,6 +37,9 @@ public:
   vector <Double_t> thisEventsFF;
   vector <Double_t> thisEventsCFD;
 
+  void MakeLendaEvent(LendaEvent *Event,DDASEvent *theDDASEvent,
+		      Long64_t jentry);
+
 
   
   void RePackSoftwareTimes(LendaEvent *Event);
