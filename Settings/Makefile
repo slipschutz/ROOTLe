@@ -5,9 +5,6 @@ LDFLAGS=$(shell root-config --ldflags)
 #SOURCES=./src/SL_Event.cc ./src/FileManager.cc ./src/Filter.cc
 
 
-EXTRAOBJS=$(patsubst %.cc,%.o,$(EXTRASOURCE))
-EXTRAHEADS=$(patsubst %.cc,%.hh,$(EXTRASOURCE))
-
 ROOTCINT=rootcint
 
 NAME=Settings
@@ -23,9 +20,10 @@ HEAD=$(addsuffic .hh,$(NAME))
 
 all: $(LIBRARY) 
 
-$(LIBRARY) : $(OBJECT) $(EXTRAOBJS) $(DICTOBJ) $(EXTRAHEADS) $(HEAD)
+$(LIBRARY) : $(OBJECT) $(DICTOBJ) $(HEAD)
 	@echo "Building Library"
 	@$(CXX) `root-config --cflags` -fPIC -shared -o $@ $^
+	@mkdir -p ../Libs; cp $@ ../Libs/
 	@echo "Build succeed"
 
 %Dictionary.o : %.hh $(EXTRAHEADS) %LinkDef.h
@@ -55,8 +53,6 @@ clean:
 	-rm -f *Dictionary.h
 	-rm -f *Dictionary.cc
 	-rm -f $(LIBRARY)
-	-rm -f *Parsed.cc
-	-rm -f *Parsed.o
 sclean:
 	-rm *~
 	make clean

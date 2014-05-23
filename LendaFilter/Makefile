@@ -5,9 +5,6 @@ LDFLAGS=$(shell root-config --ldflags)
 #SOURCES=./src/SL_Event.cc ./src/FileManager.cc ./src/Filter.cc
 
 
-EXTRAOBJS=$(patsubst %.cc,%.o,$(EXTRASOURCE))
-EXTRAHEADS=$(patsubst %.cc,%.hh,$(EXTRASOURCE))
-
 ROOTCINT=rootcint
 
 NAME=Filter
@@ -26,6 +23,7 @@ all: $(LIBRARY)
 $(LIBRARY) : $(OBJECT) $(HEAD)
 	@echo "Building Library"
 	@$(CXX) -O3 `root-config --cflags` -fPIC -shared -o $@ $^
+	@mkdir -p ../Libs; cp $@ ../Libs;
 	@echo "Build succeed"
 %.o : %.cc
 	@echo "Compiling" $< "..."

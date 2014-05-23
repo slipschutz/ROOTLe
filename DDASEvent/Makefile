@@ -1,8 +1,8 @@
 CXX=$(shell root-config --cxx)
-CFLAGS=-c -g -Wall $(shell root-config --cflags) -I./src -I ./include
+CFLAGS=-c -g -Wall $(shell root-config --cflags) 
 LDLIBS=$(shell root-config --glibs)
 LDFLAGS=$(shell root-config --ldflags)
-#SOURCES=./src/SL_Event.cc ./src/FileManager.cc ./src/Filter.cc
+
 
 ROOTCINT=rootcint
 
@@ -24,6 +24,7 @@ all: $(LIBRARY)
 $(LIBRARY) : $(DICTOBJ) $(OBJECTS) $(EXTRAOBJ)
 	@echo "Building Library"
 	@$(CXX) `root-config --cflags` -fPIC -shared -o $@ $^;
+	@mkdir -p ../Libs; cp $@ ../Libs;
 	@echo "Build succeed"
 
 %Dictionary.o : %.h $(EXTRADICTHEADERS) %LinkDef.h

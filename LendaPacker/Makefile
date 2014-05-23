@@ -23,6 +23,7 @@ all: $(LIBRARY)
 $(LIBRARY) : $(OBJECT) $(HEAD)
 	@echo "Building Library"
 	@$(CXX) -O3 $(INCLUDES) $(shell root-config --cflags)  -fPIC -shared -o $@ $^
+	@mkdir -p ../Libs/; cp $@ ../Libs/;
 	@echo "Build succeed"
 %.o : %.cc
 	@echo "Compiling" $< "..."

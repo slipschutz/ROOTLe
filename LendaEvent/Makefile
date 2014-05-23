@@ -1,4 +1,3 @@
-LENDAHEAD=$(shell echo $$LENDAHEAD)
 CXX=$(shell root-config --cxx)
 CFLAGS=-c -g -Wall $(shell root-config --cflags) -std=c++0x -O3
 INCLUDES= -I./include -I../Headers
@@ -23,12 +22,13 @@ HEAD=$(addsuffic .hh,$(NAME))
 
 all: $(LIBRARY) 
 
-$(LIBRARY) : $(OBJECT) $(EXTRAOBJS) $(DICTOBJ) $(EXTRAHEADS) $(HEAD) 
+$(LIBRARY) : $(OBJECT) $(DICTOBJ) $(HEAD) 
 	@echo "Building Library"
 	@$(CXX) -O3 `root-config --cflags` -fPIC -shared -o $@ $^
+	@mkdir -p ../Libs; cp $@ ../Libs;
 	@echo "Build succeed"
 
-%Dictionary.o : %.hh $(EXTRAHEADS) %LinkDef.h
+%Dictionary.o : %.hh %LinkDef.h
 	@echo "Generating Dictionary"
 	@$(ROOTCINT) -f $(patsubst %.o,%.cc,$@) -c $(INCLUDES) $^;
 	@echo "Compiling Dicionary"
@@ -46,13 +46,12 @@ $(LIBRARY) : $(OBJECT) $(EXTRAOBJS) $(DICTOBJ) $(EXTRAHEADS) $(HEAD)
 
 test:
 	@echo $(LIBRARY) : $(DICTOBJ) $(OBJECTS)
-	echo $(EXTRAOBJS)
 	@echo $(INCLUDES)
 
 
 
 clean:
-	-rm -f $(DICTOBJ) $(OBJECT) $(EXTRAOBJS)
+	-rm -f $(DICTOBJ) $(OBJECT)
 	-rm -f *Dictionary.h
 	-rm -f *Dictionary.cc
 	-rm -f $(LIBRARY)
