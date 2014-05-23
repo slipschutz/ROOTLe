@@ -74,7 +74,7 @@ void LendaPacker::CalcTimeFilters(){
   //  softwareCFD=softwareCFD-1;
   //  softwareCFD=softwareCFD-floor(softwareCFD);
   cubicCFD = theFilter.GetZeroCubic(thisEventsCFD)-traceDelay;
-  cubicFitCFD=theFilter.GetZeroFitCubic(thisEventsCFD)-traceDelay;
+  //  cubicFitCFD=theFilter.GetZeroFitCubic(thisEventsCFD)-traceDelay;
  
 }
 void LendaPacker::CalcEnergyGates(){
